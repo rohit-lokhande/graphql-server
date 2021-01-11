@@ -1,11 +1,10 @@
 const { GraphQLServer } = require("graphql-yoga");
 const fetch = require("node-fetch");
 
-const typeDefs = `
-  type Query {
+const schema = `type Query {
     getUsers: [User]
   }
- 
+  
   type Mutation {
     createUser(input: Input_Create_User): String!
   }
@@ -16,7 +15,7 @@ const typeDefs = `
     mobile: String,
     city: String
   }
-
+  
   type User {
     id: String,
     name: String,
@@ -24,8 +23,7 @@ const typeDefs = `
     mobile: String,
     city: String,
     login_time: Int
-  }
-`;
+  }`;
 
 const resolveUsers = users => {
     const promises = users.map( user => {
@@ -65,6 +63,10 @@ const resolvers = {
     }
 };
 
+const options = {
+    port: 8000,
+    endpoint: '/graphql'
+  }
 
-const server = new GraphQLServer({ typeDefs, resolvers });
-server.start(() => console.log("Server is running on localhost:4000"));
+const server = new GraphQLServer({ typeDefs:schema, resolvers });
+server.start(options,({port}) => console.log(`Server is running on localhost:${port}`));
